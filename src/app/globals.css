@@ -1,0 +1,87 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.5rem;
+
+  /* LeetCode-inspired dark palette. Dark is the default and only theme for
+     now — variables are still split out so a future light theme/toggle is
+     additive, not a rewrite. */
+  --background: oklch(0.16 0.005 285);
+  --foreground: oklch(0.93 0.005 285);
+
+  --card: oklch(0.20 0.006 285);
+  --card-foreground: oklch(0.93 0.005 285);
+
+  --popover: oklch(0.20 0.006 285);
+  --popover-foreground: oklch(0.93 0.005 285);
+
+  --border: oklch(0.30 0.006 285);
+  --input: oklch(0.30 0.006 285);
+  --ring: oklch(0.75 0.15 75);
+
+  /* LeetCode signature amber/orange (#FFA116-ish) */
+  --primary: oklch(0.75 0.15 75);
+  --primary-foreground: oklch(0.16 0.01 75);
+
+  --secondary: oklch(0.26 0.006 285);
+  --secondary-foreground: oklch(0.93 0.005 285);
+
+  --muted: oklch(0.24 0.006 285);
+  --muted-foreground: oklch(0.62 0.01 285);
+
+  --accent: oklch(0.26 0.006 285);
+  --accent-foreground: oklch(0.93 0.005 285);
+
+  --destructive: oklch(0.62 0.2 25);
+  --destructive-foreground: oklch(0.97 0.01 25);
+
+  /* Difficulty scale — matches LeetCode's green/amber/red convention */
+  --easy: oklch(0.72 0.16 155);
+  --medium: oklch(0.75 0.15 75);
+  --hard: oklch(0.63 0.21 25);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-easy: var(--easy);
+  --color-medium: var(--medium);
+  --color-hard: var(--hard);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+* {
+  border-color: var(--border);
+}

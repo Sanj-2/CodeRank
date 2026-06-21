@@ -1,0 +1,86 @@
+// CodeRank — Prisma schema
+// Design notes:
+// - User holds identity/auth fields only. Platform-specific data lives in its own
+//   1:1 table (LeetCodeStats today) so adding Codeforces/other platforms later is
+//   a new table + relation, not a User migration.
+// - StatsSnapshot keeps a daily history per user so we can plot heatmaps/trends
+//   later without re-deriving history from LeetCode's API (which doesn't expose it).
+// - Indexes are placed on every column the leaderboard sorts/searches by.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(cuid())
+  name             String
+  rollNumber       String   @unique
+  email            String   @unique
+  password         String
+  leetcodeUsername String   @unique
+  avatarUrl        String?
+  branch           String?
+  graduationYear   Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  leetcodeStats    LeetCodeStats?
+  statsSnapshots   StatsSnapshot[]
+  sessions         Session[]
+
+  @@index([rollNumber])
+  @@index([leetcodeUsername])
+}
+
+// Latest known LeetCode stats — overwritten on every refresh (cron or manual).
+// One row per user; this is what powers the leaderboard and profile "now" view.
+model LeetCodeStats {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  totalSolved     Int      @default(0)
+  easySolved      Int      @default(0)
+  mediumSolved    Int      @default(0)
+  hardSolved      Int      @default(0)
+  acceptanceRate  Float    @default(0)
+  contestRating   Float?
+  globalRanking   Int?
+  badges          Json?    // array of badge objects from LeetCode's API
+  lastSyncedAt    DateTime @default(now())
+
+  @@index([totalSolved])
+  @@index([contestRating])
+}
+
+// Historical daily snapshot — enables activity heatmap / trend charts later
+// without needing to backfill from LeetCode (which only exposes current totals).
+model StatsSnapshot {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date         DateTime @db.Date
+  totalSolved  Int
+  easySolved   Int
+  mediumSolved Int
+  hardSolved   Int
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+// Auth.js session storage (database strategy). Kept minimal — credentials
+// provider issues these directly rather than via an OAuth Account table,
+// though Account is easy to add back if Google OAuth is reintroduced later.
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+}
