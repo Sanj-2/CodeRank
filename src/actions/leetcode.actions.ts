@@ -1,5 +1,5 @@
 "use server";
-
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getLeetCodeStats } from "@/services/leetcode.service";
@@ -29,7 +29,7 @@ export async function syncCurrentUserStats(): Promise<SyncResult> {
           acceptanceRate: stats.acceptanceRate,
           contestRating: stats.contestRating,
           globalRanking: stats.globalRanking,
-          badges: stats.badges,
+          badges: stats.badges as unknown as Prisma.InputJsonValue,
         },
         update: {
           totalSolved: stats.totalSolved,
@@ -39,7 +39,7 @@ export async function syncCurrentUserStats(): Promise<SyncResult> {
           acceptanceRate: stats.acceptanceRate,
           contestRating: stats.contestRating,
           globalRanking: stats.globalRanking,
-          badges: stats.badges,
+          badges: stats.badges as unknown as Prisma.InputJsonValue,
           lastSyncedAt: new Date(),
         },
       }),

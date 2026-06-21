@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getLeetCodeStats } from "@/services/leetcode.service";
+import { Prisma } from "@prisma/client";
 
 // Triggered by Vercel Cron (see vercel.json) once nightly. Protected by
 // CRON_SECRET so the endpoint can't be hit by anyone who finds the URL.
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
                 acceptanceRate: stats.acceptanceRate,
                 contestRating: stats.contestRating,
                 globalRanking: stats.globalRanking,
-                badges: stats.badges,
+                badges: stats.badges as unknown as Prisma.InputJsonValue,
               },
               update: {
                 totalSolved: stats.totalSolved,
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
                 acceptanceRate: stats.acceptanceRate,
                 contestRating: stats.contestRating,
                 globalRanking: stats.globalRanking,
-                badges: stats.badges,
+                badges: stats.badges as unknown as Prisma.InputJsonValue,
                 lastSyncedAt: new Date(),
               },
             }),
